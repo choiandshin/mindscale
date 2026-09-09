@@ -14,12 +14,16 @@ Usage:
     python3 tools/fetch_new_publications.py --dry-run  # report only
 """
 import argparse
+import html
 import io
 import json
 import os
 import re
 import sys
 import time
+import tempfile
+import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -67,7 +71,27 @@ TYPE_MAP = {
 
 
 def norm(s):
-    return re.sub(r"[^a-z ]", "", (s or "").lower()).strip()
+    """Keep Unicode letters and digits; ignore markup and punctuation."""
+    s = html.unescape(re.sub(r"<[^>]+>", "", text(s)))
+    s = unicodedata.normalize("NFKC", s).casefold()
+    return " ".join("".join(c if c.isalnum() else " " for c in s).split())
+
+
+def text(value):
+    return value.strip() if isinstance(value, str) else ""
+
+
+def doi_key(value):
+    value = urllib.parse.unquote(text(value)).casefold()
+    value = re.sub(r"^(?:https?://(?:dx\.)?doi\.org/|doi:\s*)", "", value)
+    return value if re.fullmatch(r"10\.\d{4,9}/\S+", value) else ""
+
+
+def author_matches(author):
+    if not isinstance(author, dict):
+        return False
+    name = norm(text(author.get("given")) + " " + text(author.get("family")))
+    return name.replace(" ", "") in {v.replace(" ", "") for v in AUTHOR_VARIANTS}
 
 
 def crossref(url):
@@ -75,13 +99,24 @@ def crossref(url):
         "User-Agent": "MindScale-site-updater/1.0 (mailto:%s)" % MAILTO,
         "Accept": "application/json",
     })
-    with urllib.request.urlopen(req, timeout=90) as r:
-        return json.load(r)
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as exc:
+            if exc.code != 429 and exc.code < 500:
+                raise
+            if attempt == 2:
+                raise
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == 2:
+                raise
+        time.sleep(2 ** attempt)
 
 
 def fetch_candidates():
     """Return Crossref items plausibly authored by Dr. Shin."""
-    seen, items = set(), []
+    seen, items, failures = set(), [], []
     for variant in ("Hyo Jeong Shin", "Hyo J. Shin"):
         params = urllib.parse.urlencode({
             "query.author": variant,
@@ -92,36 +127,48 @@ def fetch_candidates():
         })
         try:
             data = crossref("https://api.crossref.org/works?" + params)
+            message = data.get("message") if isinstance(data, dict) else None
+            records = message.get("items") if isinstance(message, dict) else None
+            if not isinstance(records, list):
+                raise ValueError("Crossref response has no items list")
         except Exception as exc:              # network hiccup: fail soft
             print("warning: Crossref query failed for %r: %s" % (variant, exc), file=sys.stderr)
+            failures.append(variant)
             continue
-        for it in data.get("message", {}).get("items", []):
-            doi = (it.get("DOI") or "").lower()
+        for it in records:
+            if not isinstance(it, dict):
+                continue
+            doi = doi_key(it.get("DOI"))
             if doi and doi not in seen:
                 seen.add(doi)
                 items.append(it)
         time.sleep(1)
+    if failures:
+        raise RuntimeError("Incomplete Crossref check; no files changed. Try again later.")
     return items
 
 
 def is_ours(item):
-    for a in item.get("author", []) or []:
-        full = norm("%s %s" % (a.get("given", ""), a.get("family", "")))
-        if full in AUTHOR_VARIANTS:
-            return True
-    return False
+    authors = item.get("author")
+    return isinstance(authors, list) and any(author_matches(a) for a in authors)
 
 
 def format_authors(item):
     """Render the author list in the site's style, wrapping Dr. Shin in <me>."""
     out = []
-    authors = item.get("author", []) or []
+    authors = item.get("author")
+    authors = authors if isinstance(authors, list) else []
     for a in authors:
-        family = a.get("family", "").strip()
-        given = a.get("given", "").strip()
+        if not isinstance(a, dict):
+            continue
+        family = text(a.get("family")) or text(a.get("name"))
+        given = text(a.get("given"))
+        if not family:
+            continue
         initials = " ".join(p[0].upper() + "." for p in re.split(r"[ \-]+", given) if p)
         name = "%s, %s" % (family, initials) if initials else family
-        if norm("%s %s" % (given, family)) in AUTHOR_VARIANTS:
+        name = html.escape(name)
+        if author_matches(a):
             name = "<me>%s</me>" % name
         out.append(name)
     if not out:
@@ -132,12 +179,12 @@ def format_authors(item):
 
 
 def first(seq):
-    return (seq or [""])[0] if isinstance(seq, list) else (seq or "")
+    return text(seq[0]) if isinstance(seq, list) and seq else text(seq)
 
 
 def format_venue(item):
-    container = first(item.get("container-title"))
-    vol, issue, page = item.get("volume"), item.get("issue"), item.get("page")
+    container = html.escape(first(item.get("container-title")))
+    vol, issue, page = (html.escape(text(item.get(k))) for k in ("volume", "issue", "page"))
     bits = [container] if container else []
     if vol:
         bits.append(("%s(%s)" % (vol, issue)) if issue else str(vol))
@@ -147,23 +194,29 @@ def format_venue(item):
 
 
 def year_of(item):
-    parts = (item.get("issued") or {}).get("date-parts") or [[None]]
+    issued = item.get("issued")
+    parts = issued.get("date-parts") if isinstance(issued, dict) else None
     try:
-        return int(parts[0][0])
-    except (TypeError, ValueError, IndexError):
+        year = parts[0][0]
+        return year if type(year) is int and 1000 <= year <= 9998 else None
+    except (TypeError, ValueError, IndexError, KeyError):
         return None
 
 
 def to_entry(item):
     year = year_of(item)
-    if not year:
+    doi = doi_key(item.get("DOI"))
+    if not year or not doi:
         return None
     container = norm(first(item.get("container-title")))
     korean_title = first(item.get("original-title"))
-    is_korean = any(k in container for k in KOREAN_CONTAINERS) or bool(korean_title)
+    english_title = first(item.get("title"))
+    is_korean = bool(re.search(r"[\uac00-\ud7a3]", korean_title + english_title))
+    is_korean = is_korean or any(k in container for k in KOREAN_CONTAINERS)
 
-    english_title = first(item.get("title")).strip()
-    if is_korean and korean_title:
+    if not english_title:
+        return None
+    if is_korean and re.search(r"[\uac00-\ud7a3]", korean_title):
         title, title_en = korean_title.strip(), english_title
     else:
         title, title_en = english_title, ""
@@ -171,15 +224,32 @@ def to_entry(item):
     return {
         "group": str(year),
         "year": year,
-        "type": "korean" if is_korean else TYPE_MAP.get(item.get("type"), "journal"),
+        "type": "korean" if is_korean else TYPE_MAP.get(text(item.get("type")), "journal"),
         "authors": format_authors(item),
-        "title": title,
-        "title_en": title_en,
+        "title": html.escape(title),
+        "title_en": html.escape(title_en),
         "venue": format_venue(item),
-        "doi": "https://doi.org/" + item["DOI"],
+        "doi": "https://doi.org/" + doi,
         "note": "",
         "needs_review": True,
     }
+
+
+def write_payload(payload):
+    """Replace only after a complete JSON file has been flushed to disk."""
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=os.path.dirname(DATA),
+                                         prefix=".publications-", delete=False) as f:
+            tmp = f.name
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, DATA)
+    finally:
+        if tmp and os.path.exists(tmp):
+            os.unlink(tmp)
 
 
 def main():
@@ -193,18 +263,23 @@ def main():
 
     known = set()
     for p in pubs:
-        doi = (p.get("doi") or "").lower()
+        doi = doi_key(p.get("doi"))
         if doi:
-            known.add(doi.rsplit("doi.org/", 1)[-1])
+            known.add(doi)
         known.add(norm(re.sub(r"<[^>]+>", "", p.get("title", ""))))
         if p.get("title_en"):
             known.add(norm(p["title_en"]))
 
     additions = []
-    for item in fetch_candidates():
+    try:
+        candidates = fetch_candidates()
+    except RuntimeError as exc:
+        print("error: %s" % exc, file=sys.stderr)
+        return 1
+    for item in candidates:
         if not is_ours(item):
             continue
-        doi = item["DOI"].lower()
+        doi = doi_key(item.get("DOI"))
         title_key = norm(first(item.get("title")))
         if doi in known or (title_key and title_key in known):
             continue
@@ -227,9 +302,7 @@ def main():
         return 0
 
     payload["publications"] = additions + pubs
-    with io.open(DATA, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
-        f.write("\n")
+    write_payload(payload)
     print("Wrote %s" % DATA)
     return 0
 

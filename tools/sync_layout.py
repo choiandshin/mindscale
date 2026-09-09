@@ -42,8 +42,8 @@ def write(name, text):
 
 def extract(html, block, filename):
     start, end = "<!-- %s:START -->" % block, "<!-- %s:END -->" % block
-    if start not in html or end not in html:
-        sys.exit("%s: missing %s markers" % (filename, block))
+    if html.count(start) != 1 or html.count(end) != 1 or html.index(start) > html.index(end):
+        sys.exit("%s: expected one ordered pair of %s markers" % (filename, block))
     return html.split(start, 1)[1].split(end, 1)[0]
 
 
@@ -72,6 +72,10 @@ def main():
 
     master = read(MASTER)
     parts = {b: extract(master, b, MASTER) for b in BLOCKS}
+    # Validate every page before changing any, including in --check mode.
+    for page in pages():
+        for block in BLOCKS:
+            extract(read(page), block, page)
 
     changed = []
     for page in pages():

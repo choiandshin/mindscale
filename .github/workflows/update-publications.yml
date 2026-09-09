@@ -9,20 +9,30 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+
+concurrency:
+  group: publications-update
+  cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Check out the site
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+
+      - name: Test the updater before touching publication data
+        run: python3 -m unittest discover -s tests -v
 
       - name: Look for new publications on Crossref
         run: python3 tools/fetch_new_publications.py
@@ -30,9 +40,17 @@ jobs:
       - name: Rebuild publications.html
         run: python3 tools/build_publications.py
 
+      - name: Check the site before opening a pull request
+        run: |
+          python3 tools/sync_layout.py --check
+          python3 tools/validate_site.py
+
       - name: Open a pull request if anything changed
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
+          add-paths: |
+            data/publications.json
+            publications.html
           commit-message: "Add new publications found on Crossref"
           branch: auto/new-publications
           delete-branch: true
@@ -56,4 +74,3 @@ jobs:
             If an entry does not belong on the site, delete it from
             `data/publications.json` and run `python3 tools/build_publications.py`
             before merging.
-          labels: publications, automated
