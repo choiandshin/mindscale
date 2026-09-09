@@ -30,7 +30,9 @@ tools/sync_layout.py            Copies the nav + footer from index.html to every
 ## Before you publish
 
 1. **CV.** Drop your CV in the site root as `cv.pdf`. Until that file exists, the
-   "Curriculum vitae (PDF)" link on the Contact page will 404. Nothing else is outstanding.
+   "Curriculum vitae (PDF)" link on the Contact page will 404. This is a known open item.
+2. **Course descriptions.** Review the draft one-line descriptions in `teaching.html`;
+   the course titles are already authoritative.
 
 ### Already settled
 
@@ -103,9 +105,9 @@ category, then delete the flag and merge. If an entry does not belong, delete it
 the JSON, run `python3 tools/build_publications.py`, and merge.
 
 **One-time setup after the repo exists:** go to *Settings → Actions → General*, and under
-*Workflow permissions* select **Read and write permissions** and tick **Allow GitHub
-Actions to create and approve pull requests**. Without this the workflow can read but
-cannot open the PR.
+*Workflow permissions* tick **Allow GitHub Actions to create and approve pull requests**.
+Keep the default token permission read-only: this workflow requests write access only
+for its update job. Organization policies may override these settings.
 
 To test it immediately: *Actions → Update publications → Run workflow*.
 
@@ -116,6 +118,11 @@ python3 tools/fetch_new_publications.py --dry-run   # just report
 python3 tools/fetch_new_publications.py             # write to the JSON
 python3 tools/build_publications.py                 # re-render the HTML
 ```
+
+If Crossref is unavailable or a query fails, the run fails visibly and leaves the JSON
+unchanged. Retry it later from the Actions tab. It checks the first 100 ranked results
+for each of two author queries; it is a discovery aid, not an exhaustive bibliography.
+Names alone cannot distinguish every namesake: always inspect the proposed papers.
 
 The script's settings — author name variants, cut-off date, list of Korean-language
 journals — are constants at the top of `tools/fetch_new_publications.py`.
@@ -146,29 +153,35 @@ item into the three-card grid on `index.html` if it should appear on the homepag
 
 ## Publishing to GitHub Pages
 
-**Option A — user site at `https://<username>.github.io`**
+This copy is prepared for **https://choiandshin.github.io/mindscale/** using repository
+**choiandshin/mindscale**. It serves the existing HTML directly; no npm, bundler,
+framework or build command is needed.
 
-1. Create a repository named exactly `<your-github-username>.github.io`.
-2. Upload every file and folder from this directory into the repository root
-   (*Add file → Upload files*; drag and drop works). Keep the folder structure —
-   `.github/` and `.nojekyll` are hidden on macOS, so use the command line below if
-   drag-and-drop skips them.
-3. The site is live at `https://<your-github-username>.github.io` within a minute.
+1. Create the public repository `mindscale` under `choiandshin` and upload this directory
+   to its root, including `.github/`, `.gitignore` and `.nojekyll`.
+2. In **Settings → Pages**, select **Deploy from a branch**, branch **main**, folder
+   **/ (root)**, and save.
+3. Wait for **Actions → pages build and deployment** to finish successfully, then open
+   **https://choiandshin.github.io/mindscale/**. Allow a few minutes for the initial deployment.
+4. Under **Settings → Actions → General**, enable **Allow GitHub Actions to create and
+   approve pull requests** for the weekly publication review PRs.
 
-**Option B — project site (e.g. `https://<username>.github.io/mindscale`)**
+For later edits, open the file in GitHub, click the pencil, make the change, and commit.
+A commit to `main` republishes the site. Publication entries still require the renderer
+below; do not edit the generated region of `publications.html` directly.
 
-Create a repository named `mindscale`, upload as above, then *Settings → Pages*,
-source **Deploy from a branch**, branch `main`, folder `/ (root)`.
+The **Check site** workflow checks HTML, links, shared layout, the generated bibliography,
+and the updater tests on pushes and pull requests. Because Pages serves `main` directly,
+these checks report errors but do not block a Pages deployment; review their results
+before merging changes. The weekly updater performs the same checks before creating its PR.
 
-Command line — recommended, because it includes the hidden files:
+### If you choose a different address
 
-```bash
-cd mindscale
-git init && git branch -M main
-git add -A && git commit -m "MindScale Lab website"
-git remote add origin https://github.com/<username>/<repo>.git
-git push -u origin main
-```
+For an account homepage, use repository `choiandshin.github.io` instead. Before publishing
+at another address or custom domain, update `rel="canonical"`, `og:url`, `og:image` in all
+seven page heads and the `url` / `image` in the Person JSON-LD in `people.html`.
+Navigation and asset links are relative and already support a repository subfolder.
+Do not add a `CNAME` unless you own and configure that domain.
 
 ### Custom domain (optional)
 
@@ -186,8 +199,8 @@ git push -u origin main
 **Colors and spacing.** All design tokens are in the `:root` block at the top of
 `assets/css/style.css`. Changing `--teal-700` and `--navy-800` restyles the whole site.
 
-**Navigation.** The nav bar and footer are copied into each HTML file. If you add or
-rename a page, update the `<ul class="nav-links">` block in all seven files.
+**Navigation.** Edit the header/footer blocks in `index.html` only, then run
+`python3 tools/sync_layout.py`. This updates all seven copies and their active-page links.
 
 **Korean text.** Mark it with `lang="ko"` so it picks up the right font and line breaking,
 e.g. `<span lang="ko">신효정</span>`.
@@ -199,3 +212,25 @@ cd mindscale
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
+
+
+### Before committing changes
+
+```bash
+python3 tools/sync_layout.py --check
+python3 tools/build_publications.py --check
+python3 tools/validate_site.py
+python3 -m unittest discover -s tests -v
+```
+
+If publications are out of date, run `python3 tools/build_publications.py` and include
+both `data/publications.json` and `publications.html` in the commit. The renderer also
+updates the static ScholarlyArticle JSON-LD. It describes journal and conference papers;
+under-review entries are not given publication dates in structured data.
+
+Google Fonts already uses `display=swap` and font-server preconnections. The site remains
+readable using system fonts if Google Fonts is blocked. It intentionally uses one light
+palette in both operating-system color modes. Mobile navigation works without JavaScript;
+publication filters appear only when the script is available.
+
+See `REVIEW_REPORT.md` for findings, validation evidence and remaining owner decisions.
