@@ -1,0 +1,59 @@
+name: Update publications
+
+# Runs every Monday at 09:00 Korea time (00:00 UTC), and on demand from the
+# Actions tab. Checks Crossref for new work, and opens a pull request if it
+# finds any. Nothing is published until you merge that pull request.
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Look for new publications on Crossref
+        run: python3 tools/fetch_new_publications.py
+
+      - name: Rebuild publications.html
+        run: python3 tools/build_publications.py
+
+      - name: Open a pull request if anything changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Add new publications found on Crossref"
+          branch: auto/new-publications
+          delete-branch: true
+          title: "New publications found"
+          body: |
+            The weekly Crossref check found publications that are not yet on the site.
+
+            **Before merging, please check each new entry:**
+
+            - Author list and spelling — Crossref data is sometimes incomplete
+            - Journal name, volume, issue, page range
+            - For Korean-language work: the Korean title should be the main title,
+              with the English title beneath it
+            - Whether it belongs in a different category (`type` in
+              `data/publications.json`: `journal`, `chapter`, `proceedings`,
+              `report`, `korean`, `review`)
+
+            New entries are flagged with `"needs_review": true` in
+            `data/publications.json`. Remove that flag once you have checked them.
+
+            If an entry does not belong on the site, delete it from
+            `data/publications.json` and run `python3 tools/build_publications.py`
+            before merging.
+          labels: publications, automated
