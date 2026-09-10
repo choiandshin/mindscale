@@ -36,9 +36,9 @@ tools/sync_layout.py            Copies the nav + footer from index.html to every
 
 ### Already settled
 
-- **Academic title** — "Associate Professor" (부교수, from September 2026). Note that
-  조교수 translates as *Assistant* Professor and 부교수 as *Associate* Professor; the site
-  uses Associate throughout, on `people.html`.
+- **Academic title** — promoted to "Associate Professor" (부교수) on September 1, 2026,
+  as confirmed by the owner. `people.html` separates the earlier Assistant Professor
+  period (2022–August 2026) from the Associate Professor period (September 1, 2026–present).
 - **Courses** — the real list is on `teaching.html`, five undergraduate and two graduate.
   The one-line descriptions are editable; the course titles are yours as given.
 - **LinkedIn** — `https://www.linkedin.com/in/hyo-jeong-shin-42128932/`, in the footer of

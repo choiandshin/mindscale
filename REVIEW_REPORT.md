@@ -55,9 +55,9 @@ HTML 검사는 로컬 구조 검사이며 전체 W3C 적합성 인증이 아닙�
 
 1. **cv.pdf**: 원래 알려진 미완료 항목. Contact의 CV 링크는 파일을 추가하기 전까지 404입니다.
 2. **강의 설명**: 초안인 한 줄 설명을 소유자가 확인해야 합니다. 강의명과 본문은 수정하지 않았습니다.
-3. **직급 이력의 표기**: README는 Associate Professor를 2026년 9월부터로 설명하지만,
-   People의 Positions는 `2022–present / Associate Professor`로 표시합니다. 약력 사실을
-   바꾸지 말라는 지침에 따라 그대로 두었으며, 기간과 직급 구분 확인을 권합니다.
+3. **직급 이력의 표기 — 해결 (2026-09-10)**: 소유자가 부교수 승진일을 2026년 9월 1일로
+   확인했습니다. People 소개와 Positions에 정확한 날짜를 반영하고, 이전 조교수 기간과
+   부교수 기간을 구분했습니다.
 4. **Crossref 후보 검토**: 이름만으로 동명이인을 확실히 구별할 수 없습니다. 실제 후보 중
    “Alginate as a Soil Conditioner: Properties, Mechanisms, and Agricultural Applications”
    (`10.1007/s12257-023-0206-1`)은 분야상 동명이인 가능성이 있어 특히 확인이 필요합니다.
