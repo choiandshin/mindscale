@@ -148,7 +148,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 .hero-grid { display: grid; grid-template-columns: 1.5fr .9fr; gap: 56px; align-items: center; }
 .hero h1 { margin-bottom: .35em; }
 .hero .hero-tag {
-  font-family: var(--serif); font-size: 1.16rem; font-style: italic;
+  font-family: var(--serif); font-size: clamp(1.3rem, 1.1rem + .6vw, 1.6rem);
+  font-weight: 600; line-height: 1.35;
   color: var(--teal-700); margin-bottom: 1.1em;
 }
 .hero p.lede { font-size: 1.12rem; max-width: 56ch; }
