@@ -1,6 +1,78 @@
 {
   "publications": [
     {
+      "group": "2026",
+      "year": 2026,
+      "type": "korean",
+      "authors": "Kim, E. Y., &amp; <me>Shin, H. J.</me>",
+      "title": "텍스트 마이닝을 활용한 사회과 교육과정 핵심 키워드 분석: 7차부터 2022 개정까지 고등학교 『사회』과목을 중심으로",
+      "title_en": "Mapping Curricular Change: A Text Mining Analysis of South Korean Social Studies Curricula (the 7th to the 2022)",
+      "venue": "Korean Educational Research Association, 64(2), 1&ndash;26",
+      "doi": "https://doi.org/10.30916/kera.64.2.1",
+      "note": "",
+      "needs_review": true
+    },
+    {
+      "group": "2023",
+      "year": 2023,
+      "type": "journal",
+      "authors": "Ulitzsch, E., <me>Shin, H. J.</me>, &amp; Lüdtke, O.",
+      "title": "Accounting for careless and insufficient effort responding in large-scale survey data—development, evaluation, and application of a screen-time-based weighting procedure",
+      "title_en": "",
+      "venue": "Behavior Research Methods, 56(2), 804&ndash;825",
+      "doi": "https://doi.org/10.3758/s13428-022-02053-6",
+      "note": "",
+      "needs_review": true
+    },
+    {
+      "group": "2023",
+      "year": 2023,
+      "type": "journal",
+      "authors": "Jin, H., <me>Shin, H. J.</me>, &amp; Cisterna, D.",
+      "title": "Correction to: Systematic Validation in Science Learning Progression Research",
+      "title_en": "",
+      "venue": "International Journal of Science and Mathematics Education, 22(8), 1885&ndash;1885",
+      "doi": "https://doi.org/10.1007/s10763-023-10396-5",
+      "note": "",
+      "needs_review": true
+    },
+    {
+      "group": "2022",
+      "year": 2022,
+      "type": "journal",
+      "authors": "Joo, S., Ali, U., Robin, F., &amp; <me>Shin, H. J.</me>",
+      "title": "Impact of differential item functioning on group score reporting in the context of large-scale assessments",
+      "title_en": "",
+      "venue": "Large-scale Assessments in Education, 10(1)",
+      "doi": "https://doi.org/10.1186/s40536-022-00135-7",
+      "note": "",
+      "needs_review": true
+    },
+    {
+      "group": "2022",
+      "year": 2022,
+      "type": "chapter",
+      "authors": "Jin, H., Cisterna, D., <me>Shin, H. J.</me>, &amp; Vonk, M.",
+      "title": "Mathematization: A Crosscutting Theme to Enhance the Curricular Coherence",
+      "title_en": "",
+      "venue": "Mathematics Education in the Digital Era, 261&ndash;279",
+      "doi": "https://doi.org/10.1007/978-3-031-14553-7_10",
+      "note": "",
+      "needs_review": true
+    },
+    {
+      "group": "2023",
+      "year": 2023,
+      "type": "journal",
+      "authors": "<me>Shin, H. J.</me>, Cho, H. U., &amp; Park, J. M.",
+      "title": "Alginate as a Soil Conditioner: Properties, Mechanisms, and Agricultural Applications",
+      "title_en": "",
+      "venue": "Biotechnology and Bioprocess Engineering, 28(5), 734&ndash;749",
+      "doi": "https://doi.org/10.1007/s12257-023-0206-1",
+      "note": "",
+      "needs_review": true
+    },
+    {
       "group": "Under review",
       "year": 9999,
       "type": "review",
