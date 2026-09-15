@@ -36,6 +36,50 @@
     {
       "group": "2026",
       "year": 2026,
+      "type": "proceedings",
+      "authors": "<me>Shin, H. J.</me>, Andersen, N., Kim, E., Horbach, A., &amp; Zehner, F.",
+      "title": "How linguistic diversity impacts multilingual automated scoring in large-scale assessments",
+      "title_en": "",
+      "venue": "Artificial Intelligence in Education (AIED 2026), Lecture Notes in Computer Science, 16584, 454&ndash;469",
+      "doi": "https://doi.org/10.1007/978-3-032-29763-1_31",
+      "note": ""
+    },
+    {
+      "group": "2026",
+      "year": 2026,
+      "type": "journal",
+      "authors": "Kim, E., &amp; <me>Shin, H. J.</me>",
+      "title": "Examining the impact of linguistic features of item options on response patterns and item functioning",
+      "title_en": "",
+      "venue": "교육평가연구 (Journal of Educational Evaluation), 39(2), 501&ndash;529",
+      "doi": "https://doi.org/10.31158/JEEV.2026.39.2.501",
+      "note": ""
+    },
+    {
+      "group": "2026",
+      "year": 2026,
+      "type": "korean",
+      "authors": "Kim, E. Y., &amp; <me>Shin, H. J.</me>",
+      "title": "텍스트 마이닝을 활용한 사회과 교육과정 핵심 키워드 분석: 7차부터 2022 개정까지 고등학교 『사회』과목을 중심으로",
+      "title_en": "A text mining analysis of core keywords in the social studies curriculum: Focusing on high school Social Studies from the 7th to the 2022 revised national curriculum",
+      "venue": "교육학연구 (Korean Journal of Educational Research), 64(2), 1&ndash;26",
+      "doi": "",
+      "note": ""
+    },
+    {
+      "group": "2026",
+      "year": 2026,
+      "type": "korean",
+      "authors": "Lee, S. H., Lee, J. M., Jang, C. S., <me>Shin, H. J.</me>, &amp; Yu, H. G.",
+      "title": "국제성인역량조사(PIAAC)의 측정 타당성과 한국 사회에서의 활용 쟁점",
+      "title_en": "",
+      "venue": "Korea Research Institute for Vocational Education and Training (KRIVET), Research Report 2025-20",
+      "doi": "",
+      "note": "ISBN 979-11-424-0833-5"
+    },
+    {
+      "group": "2026",
+      "year": 2026,
       "type": "chapter",
       "authors": "Graf, E. A., <me>Shin, H. J.</me>, Yan, D., &amp; von Davier, A. A.",
       "title": "Automated item generation: The promises and the challenges",
@@ -53,6 +97,50 @@
       "title_en": "Examining validity and score comparability of computational thinking assessment",
       "venue": "컴퓨터교육학회논문지 (The Journal of Korean Association of Computer Education), 29(6), 90&ndash;99",
       "doi": "https://doi.org/10.32431/kace.2026.29.6.008",
+      "note": ""
+    },
+    {
+      "group": "2025",
+      "year": 2025,
+      "type": "journal",
+      "authors": "<me>Shin, H. J.</me>, Li, S., Ryoo, J. H., von Davier, A., Lubart, T., &amp; Khalil, S.",
+      "title": "The nature and measure of critical thinking: The PACIER framework and assessment",
+      "title_en": "",
+      "venue": "Journal of Intelligence, 13(9), 113",
+      "doi": "https://doi.org/10.3390/jintelligence13090113",
+      "note": ""
+    },
+    {
+      "group": "2025",
+      "year": 2025,
+      "type": "journal",
+      "authors": "<me>Shin, H. J.</me>, K&ouml;nig, C., Robin, F., Frey, A., &amp; Yamamoto, K.",
+      "title": "Robustness of item response theory models under the PISA multistage adaptive testing designs",
+      "title_en": "",
+      "venue": "Journal of Educational Measurement, 62(3), 392&ndash;414",
+      "doi": "https://doi.org/10.1111/jedm.12409",
+      "note": ""
+    },
+    {
+      "group": "2025",
+      "year": 2025,
+      "type": "proceedings",
+      "authors": "Kim, E., Khalil, S., &amp; <me>Shin, H. J.</me>",
+      "title": "Comparing human and LLM evaluations on AI-generated critical thinking items: Implications for valid applications of automatic item generation",
+      "title_en": "",
+      "venue": "Proceedings of the Second Workshop on Automated Evaluation of Learning and Assessment Content (EvalLAC 2025), CEUR Workshop Proceedings, 4006",
+      "doi": "",
+      "note": ""
+    },
+    {
+      "group": "2025",
+      "year": 2025,
+      "type": "chapter",
+      "authors": "Ali, U. S., <me>Shin, H. J.</me>, &amp; van Rijn, P. W.",
+      "title": "Navigating statistical challenges in the transition from linear to multistage adaptive testing",
+      "title_en": "",
+      "venue": "In D. Yan, A. A. von Davier, &amp; D. J. Weiss (Eds.), <em>Research for Practical Issues and Solutions in Computerized Multistage Testing</em> (pp. 324&ndash;337). Routledge",
+      "doi": "",
       "note": ""
     },
     {
