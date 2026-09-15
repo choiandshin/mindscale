@@ -1,25 +1,25 @@
 {
   "publications": [
     {
-      "group": "Under review",
-      "year": 9999,
-      "type": "review",
-      "authors": "van Rijn, P. W., Ali, U., <me>Shin, H. J.</me>, &amp; Joo, S.",
-      "title": "Adjusted residuals for local quasi-independence in item-response theory models for multistage adaptive testing",
+      "group": "2024",
+      "year": 2024,
+      "type": "journal",
+      "authors": "van Rijn, P. W., Ali, U. S., <me>Shin, H. J.</me>, &amp; Joo, S.-H.",
+      "title": "Adjusted residuals for evaluating conditional independence in IRT models for multistage adaptive testing",
       "title_en": "",
-      "venue": "",
-      "doi": "",
+      "venue": "Psychometrika, 89(1), 317&ndash;346",
+      "doi": "https://doi.org/10.1007/s11336-023-09935-4",
       "note": ""
     },
     {
-      "group": "Under review",
-      "year": 9999,
-      "type": "review",
-      "authors": "Casabianca, J. M., Donoghue, J., <me>Shin, H. J.</me>, Chao, S., &amp; Choi, I.",
-      "title": "The role of the linkage set in fitting rater response models to sparse matrices from disconnected rating designs",
+      "group": "2023",
+      "year": 2023,
+      "type": "journal",
+      "authors": "Casabianca, J. M., Donoghue, J. R., <me>Shin, H. J.</me>, Chao, S.-F., &amp; Choi, I.",
+      "title": "Using linkage sets to improve connectedness in rater response model estimation",
       "title_en": "",
-      "venue": "",
-      "doi": "",
+      "venue": "Journal of Educational Measurement, 60(3), 428&ndash;454",
+      "doi": "https://doi.org/10.1111/jedm.12360",
       "note": ""
     },
     {
